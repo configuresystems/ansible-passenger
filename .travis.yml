@@ -20,6 +20,8 @@ install:
 
 script:
   # Since Passenger will use apache, we need to ensure apache support
+  # Ensure Ansible-Passenger syntax is good before moving on
+  - ansible-playbook -i tests/inventory/test tests/$SITE --syntax-check
 
   - ansible-playbook -i ../ansible-apache2/tests/inventory/test ../ansible-apache2/tests/$SITE --syntax-check
 
@@ -54,3 +56,17 @@ script:
     | grep -q 80
     && (echo 'Apache2 is listening: pass' && exit 0)
     || (echo 'Apache2 is listening: fail' && exit 1)
+
+  # Run the role/playbook with ansible-playbook.
+  - ansible-playbook -i tests/inventory/test tests/$SITE --connection=local --sudo
+
+  # Run the role/playbook again, checking to make sure it's idempotent.
+  - >
+    ansible-playbook -i tests/inventory/test tests/$SITE --connection=local --sudo
+    | grep -q 'changed=1.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
+
+  - sudo apache2ctl -M
+
+  - sudo apt-cache show libapache2-mod-passenger
