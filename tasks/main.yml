@@ -1,0 +1,41 @@
+---
+
+- name: Add Passenger Key
+  apt_key: keyserver=keyserver.ubuntu.com
+           id=561F9B9CAC40B2F7
+  sudo: yes
+
+- name: Install HTTPS Support
+  apt: name={{ item }}
+       state=latest
+       update_cache=yes
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+  sudo: yes
+
+- name: Copy Passenger Template
+  template: src=passenger.list.j2
+            dest=/etc/apt/sources.list.d/passenger.list
+            owner=root
+            group=root
+            mode=0600
+  sudo: yes
+
+- name: Install Passenger
+  apt: name={{ item }}
+       state=latest
+       update_cache=yes
+  with_items:
+    - libapache2-mod-passenger
+  sudo: yes
+
+- name: Enable Passenger Module
+  apache2_module: name=passenger
+                  state=present
+  sudo: yes
+
+- name: restart apache
+  service: name=apache2
+           state=restarted
+  sudo: yes
