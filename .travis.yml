@@ -6,8 +6,51 @@ env:
   - SITE=test.yml
 
 before_install:
-  - #sudo apt-get update -qq
-  - #sudo apt-get install -y curl python-pip python-apt gcc
+  - sudo apt-get update -qq
+  - sudo apt-get install -y curl python-pip python-apt gcc
+  - git clone https://github.com/configuresystems/ansible-apache2.git ../ansible-apache2
 
-  - ls -al ./
-  - ls -al ../
+install:
+  # Install Ansible.
+  - pip install ansible==1.8.4 
+
+  # Add ansible.cfg to pick up roles path.
+  - printf '[defaults]\nroles_path = ../../' > ansible.cfg
+  - printf '\n127.0.0.1 example.com' | sudo tee -a /etc/hosts
+
+script:
+  # Since Passenger will use apache, we need to ensure apache support
+
+  - ansible-playbook -i ../ansible-apache2/tests/inventory/test ../ansible-apache2/tests/$SITE --syntax-check
+
+  #  
+  #                CREATE HTTP DEPLOYMENT
+  #
+  # Run the role/playbook with ansible-playbook.
+  - ansible-playbook -i ../ansible-apache2/tests/inventory/test ../ansible-apache2/tests/$SITE --connection=local --sudo
+
+  # Run the role/playbook again, checking to make sure it's idempotent.
+  - >
+    ansible-playbook -i ../ansible-apache2/tests/inventory/test ../ansible-apache2/tests/$SITE --connection=local --sudo
+    | grep -q 'changed=1.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
+
+  - >
+    curl -Is http://example.com/
+    | grep -q "HTTP/1.1 200 OK"     
+    && (echo 'Apache2 is accessible: pass' && exit 0)      
+    || (echo 'Apache2 is accessible: fail' && exit 1)
+
+  - >
+    sudo apache2ctl -S
+    | grep 80
+    | grep -q "example.com"
+    && (echo 'Domain is configured: pass' && exit 0)
+    || (echo 'Domain is configured: fail' && exit 1)
+
+  - >
+    sudo netstat -plnt
+    | grep -q 80
+    && (echo 'Apache2 is listening: pass' && exit 0)
+    || (echo 'Apache2 is listening: fail' && exit 1)
