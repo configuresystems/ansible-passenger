@@ -71,4 +71,6 @@ script:
 
   - sudo apt-cache show libapache2-mod-passenger
 
-  - sudo /usr/bin/passenger-config --root
+  - sudo ls -al /usr/bin |grep passenger
+
+  - sudo /usr/bin/passenger-config
