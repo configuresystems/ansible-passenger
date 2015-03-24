@@ -67,10 +67,15 @@ script:
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
 
-  - sudo apache2ctl -M
+  - >
+    sudo apache2ctl -M
+    | grep -iq passenger
+    && (echo 'Passenger Mod is configured: pass' && exit 0)
+    || (echo 'Passenger Mod is configured: fail' && exit 1)
 
-  - which passenger-config
+  - curl -I http://example.com/
+  - curl -Iv http://example.com/
+  - curl -v http://example.com/
+  - curl http://example.com/
 
-  - sudo apt-cache show libapache2-mod-passenger
-
-  - sudo passenger-config
+  - sudo passenger-config --version
