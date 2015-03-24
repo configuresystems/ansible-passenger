@@ -69,8 +69,8 @@ script:
 
   - sudo apache2ctl -M
 
+  - which passenger-config
+
   - sudo apt-cache show libapache2-mod-passenger
 
-  - sudo ls -al /usr/bin |grep passenger
-
-  - sudo /usr/bin/passenger-config
+  - sudo passenger-config
