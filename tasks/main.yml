@@ -48,3 +48,4 @@
   apache2_module: name=passenger
                   state=present
   sudo: yes
+  when: _apache_installed|success
