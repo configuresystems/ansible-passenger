@@ -37,13 +37,13 @@ script:
 
   - >
     sudo apache2ctl -M
-    | grep -i passenger
+    | grep -iq passenger
     && (echo 'Passenger Mod is configured: pass' && exit 0)
     || (echo 'Passenger Mod is configured: fail' && exit 1)
 
   - >
     sudo passenger-config --version
-    | grep "5.*.*"
+    | grep -q "5.*.*"
     && (echo 'Passenger >= 5 is installed: pass' && exit 0)
     || (echo 'Passenger >= 5 is installed: fail' && exit 1)
 
