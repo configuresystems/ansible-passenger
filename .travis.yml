@@ -73,11 +73,4 @@ script:
     && (echo 'Passenger Mod is configured: pass' && exit 0)
     || (echo 'Passenger Mod is configured: fail' && exit 1)
 
-  - sudo ls -al /var/log/apache2
-
-  - sudo cat /etc/apt/sources.list.d/passenger.list
-
-  - sudo stat /etc/apt/sources.list.d/passenger.list
-
-  - sudo grep -i passenger /var/log/apache2/error.log
-
+  - sudo passenger-config --version
