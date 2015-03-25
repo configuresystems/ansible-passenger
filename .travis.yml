@@ -57,8 +57,8 @@ script:
     && (echo 'Apache2 is listening: pass' && exit 0)
     || (echo 'Apache2 is listening: fail' && exit 1)
 
-  - curl -s https://example.com/
-    | grep -iq hello
+  - curl -s http://example.com/
+    | grep -i hello
     && (echo 'Index Page is configured: pass' && exit 0)
     || (echo 'Index Page is configured: fail' && exit 1)
 
@@ -74,7 +74,7 @@ script:
 
   - >
     sudo apache2ctl -M
-    | grep -iq passenger
+    | grep -i passenger
     && (echo 'Passenger Mod is configured: pass' && exit 0)
     || (echo 'Passenger Mod is configured: fail' && exit 1)
 
