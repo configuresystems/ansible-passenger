@@ -8,8 +8,6 @@
   ignore_errors: yes
   sudo: yes
 
-- debug: var=_apache_installed
-
 - name: Add Passenger Key
   apt_key: keyserver=keyserver.ubuntu.com
            id=561F9B9CAC40B2F7
