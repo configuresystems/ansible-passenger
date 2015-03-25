@@ -22,10 +22,8 @@
             mode=0600
   sudo: yes
 
-- name: Install Passenger
-  apt: name={{ item }}
-       state=latest
-       update_cache=yes
+- name: Update Repo Cache
+  apt: update_cache=yes
   sudo: yes
 
 - name: Install Passenger
