@@ -1,5 +1,13 @@
 ---
 
+- name: Check if Apache is Installed
+  command: "which apache2"
+  changed_when: false
+  always_run: yes
+  register: _apache_installed
+
+- debug: var=_apache_installed
+
 - name: Add Passenger Key
   apt_key: keyserver=keyserver.ubuntu.com
            id=561F9B9CAC40B2F7
@@ -37,9 +45,4 @@
 - name: Enable Passenger Module
   apache2_module: name=passenger
                   state=present
-  sudo: yes
-
-- name: restart apache
-  service: name=apache2
-           state=restarted
   sudo: yes
