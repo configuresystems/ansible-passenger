@@ -5,6 +5,7 @@
   changed_when: false
   always_run: yes
   register: _apache_installed
+  ignore_errors: yes
   sudo: yes
 
 - debug: var=_apache_installed
