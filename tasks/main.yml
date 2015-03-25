@@ -26,6 +26,12 @@
   apt: name={{ item }}
        state=latest
        update_cache=yes
+  sudo: yes
+
+- name: Install Passenger
+  apt: name={{ item }}
+       state=latest
+       update_cache=yes
   with_items:
     - libapache2-mod-passenger
   sudo: yes
