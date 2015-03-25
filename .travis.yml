@@ -75,11 +75,9 @@ script:
 
   - sudo ls -al /var/log/apache2
 
-  - sudo grep passenger_version /var/log/apache2/error.log
+  - sudo cat /etc/apt/sources.list.d/passenger.list
 
-  - sudo grep passenger_version /var/log/apache2/access.log
+  - sudo stat /etc/apt/sources.list.d/passenger.list
 
   - sudo grep -i passenger /var/log/apache2/error.log
-
-  - sudo grep -i passenger /var/log/apache2/access.log
 
