@@ -1,10 +1,11 @@
 ---
 
 - name: Check if Apache is Installed
-  command: "which apache2"
+  raw: which apache2
   changed_when: false
   always_run: yes
   register: _apache_installed
+  sudo: yes
 
 - debug: var=_apache_installed
 
