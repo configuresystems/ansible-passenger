@@ -57,6 +57,11 @@ script:
     && (echo 'Apache2 is listening: pass' && exit 0)
     || (echo 'Apache2 is listening: fail' && exit 1)
 
+  - curl -s https://example.com/
+    | grep -iq hello
+    && (echo 'Index Page is configured: pass' && exit 0)
+    || (echo 'Index Page is configured: fail' && exit 1)
+
   # Run the role/playbook with ansible-playbook.
   - ansible-playbook -i tests/inventory/test tests/$SITE --connection=local --sudo
 
@@ -73,9 +78,8 @@ script:
     && (echo 'Passenger Mod is configured: pass' && exit 0)
     || (echo 'Passenger Mod is configured: fail' && exit 1)
 
-  - curl -I http://example.com/
-  - curl -Iv http://example.com/
-  - curl -v http://example.com/
-  - curl http://example.com/
+  - sudo passenger-config --root
 
-  - sudo passenger-config --version
+  - sudo grep passenger_version /var/log/apache2/*
+
+  - sudo grep -i passenger /var/log/apache2/*
