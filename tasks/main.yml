@@ -20,6 +20,11 @@
   with_items:
     - apt-transport-https
     - ca-certificates
+    - apache2
+    - apache2-threaded-dev
+    - libcurl4-openssl-dev
+    - libapr1-dev
+    - libaprutil1-dev
   sudo: yes
 
 - name: Copy Passenger Template
@@ -41,9 +46,35 @@
   with_items:
     - libapache2-mod-passenger
   sudo: yes
+  when: GEM is not defined
 
 - name: Enable Passenger Module
   apache2_module: name=passenger
                   state=present
   sudo: yes
-  when: _apache_installed|success
+  when: _apache_installed|success and GEM is not defined
+
+- name: Install local user gem
+  raw: export PATH=${HOME}/.rvm/bin:${PATH} && bash -lc 'gem install passenger -v 5.0.7'
+  when: GEM is defined
+  sudo_user: "{{ username }}"
+  sudo: yes
+
+- name: compile passenger for apache2
+  raw: export PATH=${HOME}/.rvm/bin:${PATH} && bash -lc 'passenger-install-apache2-module -a --languages "ruby"'
+  when: GEM is defined
+  register: ruby_defaults
+  sudo_user: "{{ username }}"
+  sudo: yes
+
+- name: get snippet passenger for apache2
+  raw: export PATH=${HOME}/.rvm/bin:${PATH} && bash -lc 'passenger-install-apache2-module -a --languages 'ruby' --snippet'
+  when: GEM is defined
+  register: ruby_defaults
+  sudo_user: "{{ username }}"
+  sudo: yes
+
+
+- debug: var=ruby_defaults.stdout_lines
+
+
